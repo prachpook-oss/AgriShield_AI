@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -100,9 +101,23 @@
         }
 
         /* Typography */
-        h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
-        h2 { font-size: 22px; font-weight: 600; margin-bottom: 16px; }
-        p { font-size: 16px; color: var(--text-sub); line-height: 1.5; }
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        h2 {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        p {
+            font-size: 16px;
+            color: var(--text-sub);
+            line-height: 1.5;
+        }
 
         /* Components */
         .header {
@@ -147,7 +162,10 @@
             box-shadow: 0 8px 16px -4px rgba(16, 185, 129, 0.3);
         }
 
-        .btn-primary:active { transform: scale(0.98); opacity: 0.9; }
+        .btn-primary:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
 
         .btn-outline {
             background: white;
@@ -176,7 +194,7 @@
             color: var(--text-main);
         }
 
-        .input-group input[type="text"], 
+        .input-group input[type="text"],
         .input-group select {
             width: 100%;
             padding: 14px 18px;
@@ -187,7 +205,8 @@
             outline: none;
         }
 
-        .input-group input:focus, .input-group select:focus {
+        .input-group input:focus,
+        .input-group select:focus {
             border-color: var(--primary);
         }
 
@@ -257,9 +276,20 @@
             margin-bottom: 20px;
         }
 
-        .risk-low { background: #dcfce7; color: #166534; }
-        .risk-medium { background: #fef9c3; color: #854d0e; }
-        .risk-high { background: #fee2e2; color: #991b1b; }
+        .risk-low {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .risk-medium {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+
+        .risk-high {
+            background: #fee2e2;
+            color: #991b1b;
+        }
 
         .instruction-section {
             margin-top: 24px;
@@ -297,501 +327,656 @@
             border-color: var(--primary);
         }
 
+        /* History Items */
+        .history-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow);
+            border-left: 6px solid #ccc;
+        }
+
+        .history-item.low {
+            border-left-color: var(--success);
+        }
+
+        .history-item.medium {
+            border-left-color: var(--warning);
+        }
+
+        .history-item.high {
+            border-left-color: var(--danger);
+        }
+
+        .history-info {
+            flex: 1;
+        }
+
+        .history-date {
+            font-size: 12px;
+            color: var(--text-sub);
+        }
+
+        .history-chem {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .empty-history {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-sub);
+        }
+
         /* Icons placeholder using SVG or simple Text */
-        .icon { width: 24px; height: 24px; }
+        .icon {
+            width: 24px;
+            height: 24px;
+        }
     </style>
 </head>
+
 <body>
 
-<div class="app-container">
-    <!-- Home Page -->
-    <section id="page-home" class="page active">
-        <div class="lang-switcher">
-            <button class="lang-btn active" onclick="setLanguage('en')">EN</button>
-            <button class="lang-btn" onclick="setLanguage('th')">TH</button>
-        </div>
-        <div class="header">
-            <div class="logo-box">🛡️</div>
-            <h1 data-i18n="app-title">AgriShield AI</h1>
-            <p data-i18n="app-subtitle">Smart Chemical Exposure Analysis</p>
-        </div>
-        
-        <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 16px;">
-            <button class="btn btn-primary" onclick="navigateTo('page-scan')">
-                <span>📸</span> <span data-i18n="btn-scan">Scan Chemical</span>
-            </button>
-            <button class="btn btn-outline" onclick="navigateTo('page-input')">
-                <span>📝</span> <span data-i18n="btn-questionnaire">Questionnaire</span>
-            </button>
-            <button class="btn btn-outline">
-                <span>📜</span> <span data-i18n="btn-history">History</span>
-            </button>
-        </div>
-
-        <div class="card" style="margin-top: 20px; background: var(--primary-light); border: none;">
-            <p style="font-size: 14px; color: var(--primary-dark); font-weight: 500;" data-i18n="tip-text">
-                Tip: Always wear personal protective equipment when handling chemicals.
-            </p>
-        </div>
-    </section>
-
-    <!-- Scan Page -->
-    <section id="page-scan" class="page">
-        <button class="btn btn-outline" style="width: fit-content; padding: 10px 16px; font-size: 14px; margin-bottom: 20px;" onclick="navigateTo('page-home')">← <span data-i18n="btn-back">Back</span></button>
-        <h2 data-i18n="scan-title">Scan Chemical</h2>
-        <p data-i18n="scan-subtitle">Take or upload a photo of the chemical label for analysis.</p>
-        
-        <div class="scan-frame" id="drop-area">
-            <span id="scan-placeholder" style="color: var(--text-sub); text-align: center;">
-                <span style="font-size: 48px; display: block; margin-bottom: 10px;">📷</span>
-                <span data-i18n="scan-upload-text">Tap to upload or take a photo</span>
-            </span>
-            <img id="preview-image" src="" alt="Chemical label">
-            <input type="file" id="file-input" style="display: none;" accept="image/*">
-        </div>
-
-        <button class="btn btn-primary" id="btn-analyze" disabled onclick="handleScanComplete()" data-i18n="btn-analyze">Analyze Chemical</button>
-    </section>
-
-    <!-- Input Form Page -->
-    <section id="page-input" class="page">
-        <button class="btn btn-outline" style="width: fit-content; padding: 10px 16px; font-size: 14px; margin-bottom: 20px;" onclick="navigateTo('page-home')">← <span data-i18n="btn-back">Back</span></button>
-        <h2 data-i18n="input-title">Exposure Details</h2>
-        
-        <div class="input-group">
-            <label data-i18n="label-chem-name">Chemical Name</label>
-            <input type="text" id="chemical-name" placeholder="e.g. Glyphosate, Paraquat" data-i18n-placeholder="placeholder-chem">
-        </div>
-
-        <div class="input-group">
-            <label data-i18n="label-duration">Exposure Duration</label>
-            <select id="duration">
-                <option value="1" data-i18n="dur-1">Less than 1 hour</option>
-                <option value="4" data-i18n="dur-4">1–4 hours</option>
-                <option value="8" data-i18n="dur-8">More than 4 hours</option>
-            </select>
-        </div>
-
-        <div class="input-group">
-            <label data-i18n="label-ppe">Protective Equipment Used</label>
-            <div class="checkbox-group">
-                <label class="checkbox-item">
-                    <input type="checkbox" name="ppe" value="mask"> <span data-i18n="ppe-mask">Mask</span>
-                </label>
-                <label class="checkbox-item">
-                    <input type="checkbox" name="ppe" value="gloves"> <span data-i18n="ppe-gloves">Gloves</span>
-                </label>
-                <label class="checkbox-item">
-                    <input type="checkbox" name="ppe" value="suit"> <span data-i18n="ppe-suit">Protective Suit</span>
-                </label>
+    <div class="app-container">
+        <!-- Home Page -->
+        <section id="page-home" class="page active">
+            <div class="lang-switcher">
+                <button class="lang-btn active" onclick="setLanguage('en')">EN</button>
+                <button class="lang-btn" onclick="setLanguage('th')">TH</button>
             </div>
-        </div>
-
-        <div class="footer-nav">
-            <button class="btn btn-primary" onclick="navigateTo('page-symptoms')"><span data-i18n="btn-next">Next: Symptoms</span> →</button>
-        </div>
-    </section>
-
-    <!-- Symptoms Page -->
-    <section id="page-symptoms" class="page">
-        <button class="btn btn-outline" style="width: fit-content; padding: 10px 16px; font-size: 14px; margin-bottom: 20px;" onclick="navigateTo('page-input')">← <span data-i18n="btn-back">Back</span></button>
-        <h2 data-i18n="symptom-title">Check Symptoms</h2>
-        <p style="margin-bottom: 20px;" data-i18n="symptom-subtitle">Select any symptoms you are currently experiencing.</p>
-
-        <div class="input-group">
-            <label data-i18n="label-none">General</label>
-            <div class="checkbox-group">
-                <label class="checkbox-item" style="border-color: var(--primary-light);">
-                    <input type="checkbox" name="symptom" value="none" id="symptom-none"> <b data-i18n="symptom-none">No Symptoms</b>
-                </label>
+            <div class="header">
+                <div class="logo-box">🛡️</div>
+                <h1 data-i18n="app-title">AgriShield AI</h1>
+                <p data-i18n="app-subtitle">Smart Chemical Exposure Analysis</p>
             </div>
-        </div>
 
-        <div class="input-group">
-            <label data-i18n="label-nervous">Nervous System</label>
-            <div class="checkbox-group">
-                <label class="checkbox-item"><input type="checkbox" name="symptom" value="dizziness"> <span data-i18n="symp-dizziness">Dizziness</span></label>
-                <label class="checkbox-item"><input type="checkbox" name="symptom" value="fainting"> <span data-i18n="symp-fainting">Fainting</span></label>
+            <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 16px;">
+                <button class="btn btn-primary" onclick="navigateTo('page-scan')">
+                    <span>📸</span> <span data-i18n="btn-scan">Scan Chemical</span>
+                </button>
+                <button class="btn btn-outline" onclick="navigateTo('page-input')">
+                    <span>📝</span> <span data-i18n="btn-questionnaire">Questionnaire</span>
+                </button>
+                <button class="btn btn-outline" onclick="navigateTo('page-history')">
+                    <span>📜</span> <span data-i18n="btn-history">History</span>
+                </button>
             </div>
-        </div>
 
-        <div class="input-group">
-            <label data-i18n="label-respiratory">Respiratory System</label>
-            <div class="checkbox-group">
-                <label class="checkbox-item"><input type="checkbox" name="symptom" value="breathing"> <span data-i18n="symp-breathing">Difficulty Breathing</span></label>
-                <label class="checkbox-item"><input type="checkbox" name="symptom" value="coughing"> <span data-i18n="symp-cough">Persistent Cough</span></label>
+            <div class="card" style="margin-top: 20px; background: var(--primary-light); border: none;">
+                <p style="font-size: 14px; color: var(--primary-dark); font-weight: 500;" data-i18n="tip-text">
+                    Tip: Always wear personal protective equipment when handling chemicals.
+                </p>
             </div>
-        </div>
+        </section>
 
-        <div class="input-group">
-            <label data-i18n="label-skin">Skin & Eyes</label>
-            <div class="checkbox-group">
-                <label class="checkbox-item"><input type="checkbox" name="symptom" value="rash"> <span data-i18n="symp-rash">Skin Rash / Itch</span></label>
-                <label class="checkbox-item"><input type="checkbox" name="symptom" value="eyes"> <span data-i18n="symp-eyes">Eye Irritation</span></label>
+        <!-- History Page -->
+        <section id="page-history" class="page">
+            <button class="btn btn-outline"
+                style="width: fit-content; padding: 10px 16px; font-size: 14px; margin-bottom: 20px;"
+                onclick="navigateTo('page-home')">← <span data-i18n="btn-back">Back</span></button>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 data-i18n="history-title" style="margin-bottom: 0;">History</h2>
+                <button class="lang-btn" onclick="clearAllHistory()" data-i18n="btn-clear">Clear</button>
             </div>
-        </div>
 
-        <div class="input-group">
-            <label data-i18n="label-digestive">Digestive System</label>
-            <div class="checkbox-group">
-                <label class="checkbox-item"><input type="checkbox" name="symptom" value="nausea"> <span data-i18n="symp-nausea">Nausea / Vomiting</span></label>
+            <div id="history-list">
+                <!-- Items injected by JS -->
             </div>
-        </div>
+        </section>
 
-        <div class="footer-nav">
-            <button class="btn btn-primary" style="background: var(--primary-dark);" onclick="calculateAndShowResult()" data-i18n="btn-run-analysis">Run AI Analysis</button>
-        </div>
-    </section>
+        <!-- Scan Page -->
+        <section id="page-scan" class="page">
+            <button class="btn btn-outline"
+                style="width: fit-content; padding: 10px 16px; font-size: 14px; margin-bottom: 20px;"
+                onclick="navigateTo('page-home')">← <span data-i18n="btn-back">Back</span></button>
+            <h2 data-i18n="scan-title">Scan Chemical</h2>
+            <p data-i18n="scan-subtitle">Take or upload a photo of the chemical label for analysis.</p>
 
-    <!-- Result Page -->
-    <section id="page-result" class="page">
-        <div class="result-header">
-            <div id="result-icon" class="result-icon">✅</div>
-            <div id="risk-badge" class="risk-badge risk-low" data-i18n="risk-low">Low Risk</div>
-            <h2 id="result-title" data-i18n="res-title">System Analysis Complete</h2>
-        </div>
-
-        <div class="card">
-            <h3 style="font-size: 16px; margin-bottom: 12px;" data-i18n="res-summary">Report Summary</h3>
-            <p style="font-size: 14px; margin-bottom: 8px;"><b data-i18n="res-label-chem">Chemical:</b> <span id="res-chemical">-</span></p>
-            <p style="font-size: 14px; margin-bottom: 8px;"><b data-i18n="res-label-dur">Duration:</b> <span id="res-duration">-</span></p>
-            <p style="font-size: 14px; margin-bottom: 8px;"><b data-i18n="res-label-ppe">PPE Usage:</b> <span id="res-ppe">-</span></p>
-            <p style="font-size: 14px;"><b data-i18n="res-label-sym">Symptoms:</b> <span id="res-symptoms">-</span></p>
-        </div>
-
-        <div class="instruction-section">
-            <h3 style="font-size: 18px; margin-bottom: 12px;" data-i18n="res-label-aid">First Aid Instructions</h3>
-            <div id="first-aid-content" class="card" style="border-left: 5px solid var(--primary);">
-                <!-- Dynamic content -->
+            <div class="scan-frame" id="drop-area">
+                <span id="scan-placeholder" style="color: var(--text-sub); text-align: center;">
+                    <span style="font-size: 48px; display: block; margin-bottom: 10px;">📷</span>
+                    <span data-i18n="scan-upload-text">Tap to upload or take a photo</span>
+                </span>
+                <img id="preview-image" src="" alt="Chemical label">
+                <input type="file" id="file-input" style="display: none;" accept="image/*">
             </div>
-        </div>
 
-        <div class="instruction-section">
-            <h3 style="font-size: 18px; margin-bottom: 12px;" data-i18n="res-label-recs">Recommendations</h3>
-            <div id="recommendations-content" style="padding-left: 20px; font-size: 14px; color: var(--text-sub);">
-                <!-- Dynamic content -->
+            <button class="btn btn-primary" id="btn-analyze" disabled onclick="handleScanComplete()"
+                data-i18n="btn-analyze">Analyze Chemical</button>
+        </section>
+
+        <!-- Input Form Page -->
+        <section id="page-input" class="page">
+            <button class="btn btn-outline"
+                style="width: fit-content; padding: 10px 16px; font-size: 14px; margin-bottom: 20px;"
+                onclick="navigateTo('page-home')">← <span data-i18n="btn-back">Back</span></button>
+            <h2 data-i18n="input-title">Exposure Details</h2>
+
+            <div class="input-group">
+                <label data-i18n="label-chem-name">Chemical Name</label>
+                <input type="text" id="chemical-name" placeholder="e.g. Glyphosate, Paraquat"
+                    data-i18n-placeholder="placeholder-chem">
             </div>
-        </div>
 
-        <div class="footer-nav">
-            <button class="btn btn-primary" onclick="resetApp()" data-i18n="btn-done">Done</button>
-        </div>
-    </section>
-</div>
+            <div class="input-group">
+                <label data-i18n="label-duration">Exposure Duration</label>
+                <select id="duration">
+                    <option value="1" data-i18n="dur-1">Less than 1 hour</option>
+                    <option value="4" data-i18n="dur-4">1–4 hours</option>
+                    <option value="8" data-i18n="dur-8">More than 4 hours</option>
+                </select>
+            </div>
 
-<script>
-    const i18n = {
-        en: {
-            "app-title": "AgriShield AI",
-            "app-subtitle": "Smart Chemical Exposure Analysis",
-            "btn-scan": "Scan Chemical",
-            "btn-questionnaire": "Questionnaire",
-            "btn-history": "History",
-            "tip-text": "Tip: Always wear personal protective equipment when handling chemicals.",
-            "btn-back": "Back",
-            "scan-title": "Scan Chemical",
-            "scan-subtitle": "Take or upload a photo of the chemical label for analysis.",
-            "scan-upload-text": "Tap to upload or take a photo",
-            "btn-analyze": "Analyze Chemical",
-            "input-title": "Exposure Details",
-            "label-chem-name": "Chemical Name",
-            "placeholder-chem": "e.g. Glyphosate, Paraquat",
-            "label-duration": "Exposure Duration",
-            "dur-1": "Less than 1 hour",
-            "dur-4": "1–4 hours",
-            "dur-8": "More than 4 hours",
-            "label-ppe": "Protective Equipment Used",
-            "ppe-mask": "Mask",
-            "ppe-gloves": "Gloves",
-            "ppe-suit": "Protective Suit",
-            "btn-next": "Next: Symptoms",
-            "symptom-title": "Check Symptoms",
-            "symptom-subtitle": "Select any symptoms you are currently experiencing.",
-            "label-none": "General",
-            "symptom-none": "No Symptoms",
-            "label-nervous": "Nervous System",
-            "symp-dizziness": "Dizziness",
-            "symp-fainting": "Fainting",
-            "label-respiratory": "Respiratory System",
-            "symp-breathing": "Difficulty Breathing",
-            "symp-cough": "Persistent Cough",
-            "label-skin": "Skin & Eyes",
-            "symp-rash": "Skin Rash / Itch",
-            "symp-eyes": "Eye Irritation",
-            "label-digestive": "Digestive System",
-            "symp-nausea": "Nausea / Vomiting",
-            "btn-run-analysis": "Run AI Analysis",
-            "risk-low": "Low Risk",
-            "risk-medium": "Medium Risk",
-            "risk-high": "High Risk",
-            "res-title": "System Analysis Complete",
-            "res-summary": "Report Summary",
-            "res-label-chem": "Chemical:",
-            "res-label-dur": "Duration:",
-            "res-label-ppe": "PPE Usage:",
-            "res-label-sym": "Symptoms:",
-            "res-label-aid": "First Aid Instructions",
-            "res-label-recs": "Recommendations",
-            "btn-done": "Done",
-            "res-none": "None reported",
-            "res-ppe-none": "None",
-            "risk-high-aid": "<b>URGENT:</b> Seek medical attention immediately. Bring the chemical label with you.<p style='margin-top:8px;'>If inhaled: Move to fresh air. If on skin: Wash with plenty of water for 15 mins.</p>",
-            "risk-high-recs": "<ul style='list-style-type: disc; margin-top: 10px;'><li>Call emergency services or poison control.</li><li>Do not induce vomiting unless told by professionals.</li><li>Rest and monitor vital signs.</li></ul>",
-            "risk-med-aid": "<b>Caution:</b> Monitor your symptoms closely. If they worsen, visit a clinic.<p style='margin-top:8px;'>Wash exposed areas thoroughly and change all clothing.</p>",
-            "risk-med-recs": "<ul style='list-style-type: disc; margin-top: 10px;'><li>Hydrate well with clean water.</li><li>Store chemicals in a secure, ventilated area.</li><li>Review PPE requirements for this specific chemical.</li></ul>",
-            "risk-low-aid": "<b>Stable:</b> No immediate danger detected. Continue to monitor for delayed reactions.",
-            "risk-low-recs": "<ul style='list-style-type: disc; margin-top: 10px;'><li>Always wear gloves and masks in the future.</li><li>Keep a log of chemical usage times.</li></ul>"
-        },
-        th: {
-            "app-title": "AgriShield AI",
-            "app-subtitle": "ระบบวิเคราะห์ความเสี่ยงจากการสัมผัสสารเคมี",
-            "btn-scan": "สแกนสารเคมี",
-            "btn-questionnaire": "แบบสอบถาม",
-            "btn-history": "ประวัติการใช้งาน",
-            "tip-text": "คำแนะนำ: สวมใส่อุปกรณ์ป้องกันทุกครั้งเมื่อสัมผัสสารเคมี",
-            "btn-back": "ย้อนกลับ",
-            "scan-title": "สแกนสารเคมี",
-            "scan-subtitle": "ถ่ายรูปหรืออัปโหลดรูปฉลากสารเคมีเพื่อเริ่มการวิเคราะห์",
-            "scan-upload-text": "แตะเพื่ออัปโหลดหรือถ่ายรูป",
-            "btn-analyze": "วิเคราะห์สารเคมี",
-            "input-title": "รายละเอียดการสัมผัส",
-            "label-chem-name": "ชื่อสารเคมี",
-            "placeholder-chem": "เช่น ไกลโฟเซต, พาราควอต",
-            "label-duration": "ระยะเวลาที่สัมผัส",
-            "dur-1": "น้อยกว่า 1 ชั่วโมง",
-            "dur-4": "1–4 ชั่วโมง",
-            "dur-8": "มากกว่า 4 ชั่วโมง",
-            "label-ppe": "อุปกรณ์ป้องกันที่ใช้",
-            "ppe-mask": "หน้ากาก",
-            "ppe-gloves": "ถุงมือ",
-            "ppe-suit": "ชุดป้องกัน",
-            "btn-next": "ถัดไป: เช็คอาการ",
-            "symptom-title": "เช็คอาการเบื้องต้น",
-            "symptom-subtitle": "เลือกอาการที่คุณกำลังประสบอยู่",
-            "label-none": "ทั่วไป",
-            "symptom-none": "ไม่มีอาการ",
-            "label-nervous": "ระบบประสาท",
-            "symp-dizziness": "เวียนศีรษะ",
-            "symp-fainting": "หน้ามืด/เป็นลม",
-            "label-respiratory": "ระบบทางเดินหายใจ",
-            "symp-breathing": "หายใจลำบาก",
-            "symp-cough": "ไอแห้งรุนแรง",
-            "label-skin": "ผิวหนังและดวงตา",
-            "symp-rash": "ผื่นคัน/ระคายเคืองปิว",
-            "symp-eyes": "แสบตา/ตาแดง",
-            "label-digestive": "ระบบทางเดินอาหาร",
-            "symp-nausea": "คลื่นไส้/อาเจียน",
-            "btn-run-analysis": "เริ่มการวิเคราะห์ด้วย AI",
-            "risk-low": "ความเสี่ยงต่ำ",
-            "risk-medium": "ความเสี่ยงปานกลาง",
-            "risk-high": "ความเสี่ยงสูง",
-            "res-title": "การวิเคราะห์ระบบเสร็จสมบูรณ์",
-            "res-summary": "สรุปรายงาน",
-            "res-label-chem": "สารเคมี:",
-            "res-label-dur": "ระยะเวลา:",
-            "res-label-ppe": "อุปกรณ์ป้องกัน:",
-            "res-label-sym": "อาการที่พบ:",
-            "res-label-aid": "วิธีปฐมพยาบาลเบื้องต้น",
-            "res-label-recs": "คำแนะนำเพิ่มเติม",
-            "btn-done": "เสร็จสิ้น",
-            "res-none": "ไม่พบอาการที่ระบุ",
-            "res-ppe-none": "ไม่ได้ใช้",
-            "risk-high-aid": "<b>ด่วน:</b> ควรไปพบแพทย์ทันที พร้อมนำฉลากสารเคมีไปด้วย<p style='margin-top:8px;'>หากสูดดม: ไปที่อากาศบริสุทธิ์ หากโดนผิวหนัง: ล้างด้วยน้ำสะอาดอย่างน้อย 15 นาที</p>",
-            "risk-high-recs": "<ul style='list-style-type: disc; margin-top: 10px;'><li>ติดต่อสายด่วนศูนย์พิษวิทยา</li><li>ห้ามทำให้อาเจียน เว้นแต่จะได้รับคำแนะนำจากแพทย์</li><li>พักผ่อนและเฝ้าระวังสัญญาณชีพ</li></ul>",
-            "risk-med-aid": "<b>ข้อควรระวัง:</b> เฝ้าระวังอาการอย่างใกล้ชิด หากอาการรุนแรงขึ้นให้ไปรับการตรวจ<p style='margin-top:8px;'>ล้างร่างกายในส่วนที่สัมผัสสารเคมีและเปลี่ยนเสื้อผ้าทันที</p>",
-            "risk-med-recs": "<ul style='list-style-type: disc; margin-top: 10px;'><li>ดื่มน้ำสะอาดให้เพียงพอ</li><li>เก็บสารเคมีในที่ปลอดภัยและอากาศถ่ายเท</li><li>ตรวจสอบมาตรฐานอุปกรณ์ป้องกันสำหรับสารเคมีชนิดนี้</li></ul>",
-            "risk-low-aid": "<b>ปกติ:</b> ไม่พบคลิปอันตรายในขณะนี้ ควรเฝ้าระวังอาการต่อเนื่อง",
-            "risk-low-recs": "<ul style='list-style-type: disc; margin-top: 10px;'><li>ควรสวมถุงมือและหน้ากากทุกครั้งในอนาคต</li><li>จดบันทึกประวัติการใช้สารเคมี</li></ul>"
-        }
-    };
+            <div class="input-group">
+                <label data-i18n="label-ppe">Protective Equipment Used</label>
+                <div class="checkbox-group">
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="ppe" value="mask"> <span data-i18n="ppe-mask">Mask</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="ppe" value="gloves"> <span data-i18n="ppe-gloves">Gloves</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="ppe" value="suit"> <span data-i18n="ppe-suit">Protective
+                            Suit</span>
+                    </label>
+                </div>
+            </div>
 
-    const appState = {
-        currentPage: 'page-home',
-        currentLang: 'en',
-        chemicalName: '',
-        duration: '',
-        ppe: [],
-        symptoms: []
-    };
+            <div class="footer-nav">
+                <button class="btn btn-primary" onclick="navigateTo('page-symptoms')"><span data-i18n="btn-next">Next:
+                        Symptoms</span> →</button>
+            </div>
+        </section>
 
-    function setLanguage(lang) {
-        appState.currentLang = lang;
-        
-        // Update active class on buttons
-        document.querySelectorAll('.lang-btn').forEach(btn => {
-            btn.classList.toggle('active', btn.innerText.toLowerCase() === lang);
-        });
+        <!-- Symptoms Page -->
+        <section id="page-symptoms" class="page">
+            <button class="btn btn-outline"
+                style="width: fit-content; padding: 10px 16px; font-size: 14px; margin-bottom: 20px;"
+                onclick="navigateTo('page-input')">← <span data-i18n="btn-back">Back</span></button>
+            <h2 data-i18n="symptom-title">Check Symptoms</h2>
+            <p style="margin-bottom: 20px;" data-i18n="symptom-subtitle">Select any symptoms you are currently
+                experiencing.</p>
 
-        // Update text content
-        document.querySelectorAll('[data-i18n]').forEach(el => {
-            const key = el.getAttribute('data-i18n');
-            if (i18n[lang][key]) {
-                el.innerHTML = i18n[lang][key];
+            <div class="input-group">
+                <label data-i18n="label-none">General</label>
+                <div class="checkbox-group">
+                    <label class="checkbox-item" style="border-color: var(--primary-light);">
+                        <input type="checkbox" name="symptom" value="none" id="symptom-none"> <b
+                            data-i18n="symptom-none">No Symptoms</b>
+                    </label>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label data-i18n="label-nervous">Nervous System</label>
+                <div class="checkbox-group">
+                    <label class="checkbox-item"><input type="checkbox" name="symptom" value="dizziness"> <span
+                            data-i18n="symp-dizziness">Dizziness</span></label>
+                    <label class="checkbox-item"><input type="checkbox" name="symptom" value="fainting"> <span
+                            data-i18n="symp-fainting">Fainting</span></label>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label data-i18n="label-respiratory">Respiratory System</label>
+                <div class="checkbox-group">
+                    <label class="checkbox-item"><input type="checkbox" name="symptom" value="breathing"> <span
+                            data-i18n="symp-breathing">Difficulty Breathing</span></label>
+                    <label class="checkbox-item"><input type="checkbox" name="symptom" value="coughing"> <span
+                            data-i18n="symp-cough">Persistent Cough</span></label>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label data-i18n="label-skin">Skin & Eyes</label>
+                <div class="checkbox-group">
+                    <label class="checkbox-item"><input type="checkbox" name="symptom" value="rash"> <span
+                            data-i18n="symp-rash">Skin Rash / Itch</span></label>
+                    <label class="checkbox-item"><input type="checkbox" name="symptom" value="eyes"> <span
+                            data-i18n="symp-eyes">Eye Irritation</span></label>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label data-i18n="label-digestive">Digestive System</label>
+                <div class="checkbox-group">
+                    <label class="checkbox-item"><input type="checkbox" name="symptom" value="nausea"> <span
+                            data-i18n="symp-nausea">Nausea / Vomiting</span></label>
+                </div>
+            </div>
+
+            <div class="footer-nav">
+                <button class="btn btn-primary" style="background: var(--primary-dark);"
+                    onclick="calculateAndShowResult()" data-i18n="btn-run-analysis">Run AI Analysis</button>
+            </div>
+        </section>
+
+        <!-- Result Page -->
+        <section id="page-result" class="page">
+            <div class="result-header">
+                <div id="result-icon" class="result-icon">✅</div>
+                <div id="risk-badge" class="risk-badge risk-low" data-i18n="risk-low">Low Risk</div>
+                <h2 id="result-title" data-i18n="res-title">System Analysis Complete</h2>
+            </div>
+
+            <div class="card">
+                <h3 style="font-size: 16px; margin-bottom: 12px;" data-i18n="res-summary">Report Summary</h3>
+                <p style="font-size: 14px; margin-bottom: 8px;"><b data-i18n="res-label-chem">Chemical:</b> <span
+                        id="res-chemical">-</span></p>
+                <p style="font-size: 14px; margin-bottom: 8px;"><b data-i18n="res-label-dur">Duration:</b> <span
+                        id="res-duration">-</span></p>
+                <p style="font-size: 14px; margin-bottom: 8px;"><b data-i18n="res-label-ppe">PPE Usage:</b> <span
+                        id="res-ppe">-</span></p>
+                <p style="font-size: 14px;"><b data-i18n="res-label-sym">Symptoms:</b> <span id="res-symptoms">-</span>
+                </p>
+            </div>
+
+            <div class="instruction-section">
+                <h3 style="font-size: 18px; margin-bottom: 12px;" data-i18n="res-label-aid">First Aid Instructions</h3>
+                <div id="first-aid-content" class="card" style="border-left: 5px solid var(--primary);">
+                    <!-- Dynamic content -->
+                </div>
+            </div>
+
+            <div class="instruction-section">
+                <h3 style="font-size: 18px; margin-bottom: 12px;" data-i18n="res-label-recs">Recommendations</h3>
+                <div id="recommendations-content" style="padding-left: 20px; font-size: 14px; color: var(--text-sub);">
+                    <!-- Dynamic content -->
+                </div>
+            </div>
+
+            <div class="footer-nav">
+                <button class="btn btn-primary" onclick="resetApp()" data-i18n="btn-done">Done</button>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const i18n = {
+            en: {
+                "app-title": "AgriShield AI",
+                "app-subtitle": "Smart Chemical Exposure Analysis",
+                "btn-scan": "Scan Chemical",
+                "btn-questionnaire": "Questionnaire",
+                "btn-history": "History",
+                "tip-text": "Tip: Always wear personal protective equipment when handling chemicals.",
+                "btn-back": "Back",
+                "scan-title": "Scan Chemical",
+                "scan-subtitle": "Take or upload a photo of the chemical label for analysis.",
+                "scan-upload-text": "Tap to upload or take a photo",
+                "btn-analyze": "Analyze Chemical",
+                "input-title": "Exposure Details",
+                "label-chem-name": "Chemical Name",
+                "placeholder-chem": "e.g. Glyphosate, Paraquat",
+                "label-duration": "Exposure Duration",
+                "dur-1": "Less than 1 hour",
+                "dur-4": "1–4 hours",
+                "dur-8": "More than 4 hours",
+                "label-ppe": "Protective Equipment Used",
+                "ppe-mask": "Mask",
+                "ppe-gloves": "Gloves",
+                "ppe-suit": "Protective Suit",
+                "btn-next": "Next: Symptoms",
+                "symptom-title": "Check Symptoms",
+                "symptom-subtitle": "Select any symptoms you are currently experiencing.",
+                "label-none": "General",
+                "symptom-none": "No Symptoms",
+                "label-nervous": "Nervous System",
+                "symp-dizziness": "Dizziness",
+                "symp-fainting": "Fainting",
+                "label-respiratory": "Respiratory System",
+                "symp-breathing": "Difficulty Breathing",
+                "symp-cough": "Persistent Cough",
+                "label-skin": "Skin & Eyes",
+                "symp-rash": "Skin Rash / Itch",
+                "symp-eyes": "Eye Irritation",
+                "label-digestive": "Digestive System",
+                "symp-nausea": "Nausea / Vomiting",
+                "btn-run-analysis": "Run AI Analysis",
+                "risk-low": "Low Risk",
+                "risk-medium": "Medium Risk",
+                "risk-high": "High Risk",
+                "res-title": "System Analysis Complete",
+                "res-summary": "Report Summary",
+                "res-label-chem": "Chemical:",
+                "res-label-dur": "Duration:",
+                "res-label-ppe": "PPE Usage:",
+                "res-label-sym": "Symptoms:",
+                "res-label-aid": "First Aid Instructions",
+                "res-label-recs": "Recommendations",
+                "btn-done": "Done",
+                "res-none": "None reported",
+                "res-ppe-none": "None",
+                "history-title": "History",
+                "btn-clear": "Clear",
+                "history-empty": "No history found.",
+                "history-risk": "Risk:",
+                "risk-high-aid": "<b>URGENT:</b> Seek medical attention immediately. Bring the chemical label with you.<p style='margin-top:8px;'>If inhaled: Move to fresh air. If on skin: Wash with plenty of water for 15 mins.</p>",
+                "risk-high-recs": "<ul style='list-style-type: disc; margin-top: 10px;'><li>Call emergency services or poison control.</li><li>Do not induce vomiting unless told by professionals.</li><li>Rest and monitor vital signs.</li></ul>",
+                "risk-med-aid": "<b>Caution:</b> Monitor your symptoms closely. If they worsen, visit a clinic.<p style='margin-top:8px;'>Wash exposed areas thoroughly and change all clothing.</p>",
+                "risk-med-recs": "<ul style='list-style-type: disc; margin-top: 10px;'><li>Hydrate well with clean water.</li><li>Store chemicals in a secure, ventilated area.</li><li>Review PPE requirements for this specific chemical.</li></ul>",
+                "risk-low-aid": "<b>Stable:</b> No immediate danger detected. Continue to monitor for delayed reactions.",
+                "risk-low-recs": "<ul style='list-style-type: disc; margin-top: 10px;'><li>Always wear gloves and masks in the future.</li><li>Keep a log of chemical usage times.</li></ul>"
+            },
+            th: {
+                "app-title": "AgriShield AI",
+                "app-subtitle": "ระบบวิเคราะห์ความเสี่ยงจากการสัมผัสสารเคมี",
+                "btn-scan": "สแกนสารเคมี",
+                "btn-questionnaire": "แบบสอบถาม",
+                "btn-history": "ประวัติการใช้งาน",
+                "tip-text": "คำแนะนำ: สวมใส่อุปกรณ์ป้องกันทุกครั้งเมื่อสัมผัสสารเคมี",
+                "btn-back": "ย้อนกลับ",
+                "scan-title": "สแกนสารเคมี",
+                "scan-subtitle": "ถ่ายรูปหรืออัปโหลดรูปฉลากสารเคมีเพื่อเริ่มการวิเคราะห์",
+                "scan-upload-text": "แตะเพื่ออัปโหลดหรือถ่ายรูป",
+                "btn-analyze": "วิเคราะห์สารเคมี",
+                "input-title": "รายละเอียดการสัมผัส",
+                "label-chem-name": "ชื่อสารเคมี",
+                "placeholder-chem": "เช่น ไกลโฟเซต, พาราควอต",
+                "label-duration": "ระยะเวลาที่สัมผัส",
+                "dur-1": "น้อยกว่า 1 ชั่วโมง",
+                "dur-4": "1–4 ชั่วโมง",
+                "dur-8": "มากกว่า 4 ชั่วโมง",
+                "label-ppe": "อุปกรณ์ป้องกันที่ใช้",
+                "ppe-mask": "หน้ากาก",
+                "ppe-gloves": "ถุงมือ",
+                "ppe-suit": "ชุดป้องกัน",
+                "btn-next": "ถัดไป: เช็คอาการ",
+                "symptom-title": "เช็คอาการเบื้องต้น",
+                "symptom-subtitle": "เลือกอาการที่คุณกำลังประสบอยู่",
+                "label-none": "ทั่วไป",
+                "symptom-none": "ไม่มีอาการ",
+                "label-nervous": "ระบบประสาท",
+                "symp-dizziness": "เวียนศีรษะ",
+                "symp-fainting": "หน้ามืด/เป็นลม",
+                "label-respiratory": "ระบบทางเดินหายใจ",
+                "symp-breathing": "หายใจลำบาก",
+                "symp-cough": "ไอแห้งรุนแรง",
+                "label-skin": "ผิวหนังและดวงตา",
+                "symp-rash": "ผื่นคัน/ระคายเคืองปิว",
+                "symp-eyes": "แสบตา/ตาแดง",
+                "label-digestive": "ระบบทางเดินอาหาร",
+                "symp-nausea": "คลื่นไส้/อาเจียน",
+                "btn-run-analysis": "เริ่มการวิเคราะห์ด้วย AI",
+                "risk-low": "ความเสี่ยงต่ำ",
+                "risk-medium": "ความเสี่ยงปานกลาง",
+                "risk-high": "ความเสี่ยงสูง",
+                "res-title": "การวิเคราะห์ระบบเสร็จสมบูรณ์",
+                "res-summary": "สรุปรายงาน",
+                "res-label-chem": "สารเคมี:",
+                "res-label-dur": "ระยะเวลา:",
+                "res-label-ppe": "อุปกรณ์ป้องกัน:",
+                "res-label-sym": "อาการที่พบ:",
+                "res-label-aid": "วิธีปฐมพยาบาลเบื้องต้น",
+                "res-label-recs": "คำแนะนำเพิ่มเติม",
+                "btn-done": "เสร็จสิ้น",
+                "res-none": "ไม่พบอาการที่ระบุ",
+                "res-ppe-none": "ไม่ได้ใช้",
+                "history-title": "ประวัติการใช้งาน",
+                "btn-clear": "ล้างประวัติ",
+                "history-empty": "ยังไม่มีประวัติการใช้งาน",
+                "history-risk": "ความเสี่ยง:",
+                "risk-high-aid": "<b>ด่วน:</b> ควรไปพบแพทย์ทันที พร้อมนำฉลากสารเคมีไปด้วย<p style='margin-top:8px;'>หากสูดดม: ไปที่อากาศบริสุทธิ์ หากโดนผิวหนัง: ล้างด้วยน้ำสะอาดอย่างน้อย 15 นาที</p>",
+                "risk-high-recs": "<ul style='list-style-type: disc; margin-top: 10px;'><li>ติดต่อสายด่วนศูนย์พิษวิทยา</li><li>ห้ามทำให้อาเจียน เว้นแต่จะได้รับคำแนะนำจากแพทย์</li><li>พักผ่อนและเฝ้าระวังสัญญาณชีพ</li></ul>",
+                "risk-med-aid": "<b>ข้อควรระวัง:</b> เฝ้าระวังอาการอย่างใกล้ชิด หากอาการรุนแรงขึ้นให้ไปรับการตรวจ<p style='margin-top:8px;'>ล้างร่างกายในส่วนที่สัมผัสสารเคมีและเปลี่ยนเสื้อผ้าทันที</p>",
+                "risk-med-recs": "<ul style='list-style-type: disc; margin-top: 10px;'><li>ดื่มน้ำสะอาดให้เพียงพอ</li><li>เก็บสารเคมีในที่ปลอดภัยและอากาศถ่ายเท</li><li>ตรวจสอบมาตรฐานอุปกรณ์ป้องกันสำหรับสารเคมีชนิดนี้</li></ul>",
+                "risk-low-aid": "<b>ปกติ:</b> ไม่พบอันตรายในขณะนี้ ควรเฝ้าระวังอาการต่อเนื่อง",
+                "risk-low-recs": "<ul style='list-style-type: disc; margin-top: 10px;'><li>ควรสวมถุงมือและหน้ากากทุกครั้งในอนาคต</li><li>จดบันทึกประวัติการใช้สารเคมี</li></ul>"
             }
-        });
+        };
 
-        // Update placeholders
-        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-            const key = el.getAttribute('data-i18n-placeholder');
-            if (i18n[lang][key]) {
-                el.placeholder = i18n[lang][key];
-            }
-        });
-    }
+        const appState = {
+            currentPage: 'page-home',
+            currentLang: 'en',
+            chemicalName: '',
+            duration: '',
+            ppe: [],
+            symptoms: []
+        };
 
-    function navigateTo(pageId) {
-        const pages = document.querySelectorAll('.page');
-        const targetPage = document.getElementById(pageId);
-        const pagesArray = Array.from(pages);
-        const nextPageIndex = pagesArray.indexOf(targetPage);
-        const currentPageIndex = pagesArray.findIndex(p => p.classList.contains('active'));
+        function setLanguage(lang) {
+            appState.currentLang = lang;
 
-        pages.forEach((page, index) => {
-            page.classList.remove('active', 'prev', 'next');
-            if (index < nextPageIndex) {
-                page.classList.add('prev');
-            } else if (index > nextPageIndex) {
-                page.classList.add('next');
-            }
-        });
+            // Update active class on buttons
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.innerText.toLowerCase() === lang);
+            });
 
-        targetPage.classList.add('active');
-        appState.currentPage = pageId;
-        
-        // Scroll to top on navigation
-        targetPage.scrollTop = 0;
-    }
+            // Update text content
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[lang][key]) {
+                    el.innerHTML = i18n[lang][key];
+                }
+            });
 
-    // Symptoms "None" mutual exclusivity logic
-    const noneSymptomsCheckbox = document.getElementById('symptom-none');
-    const allSymptomsCheckboxes = document.querySelectorAll('input[name="symptom"]');
-
-    noneSymptomsCheckbox.onchange = () => {
-        if (noneSymptomsCheckbox.checked) {
-            allSymptomsCheckboxes.forEach(cb => {
-                if (cb !== noneSymptomsCheckbox) cb.checked = false;
+            // Update placeholders
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (i18n[lang][key]) {
+                    el.placeholder = i18n[lang][key];
+                }
             });
         }
-    };
 
-    allSymptomsCheckboxes.forEach(cb => {
-        if (cb !== noneSymptomsCheckbox) {
-            cb.onchange = () => {
-                if (cb.checked) noneSymptomsCheckbox.checked = false;
+        function navigateTo(pageId) {
+            const pages = document.querySelectorAll('.page');
+            const targetPage = document.getElementById(pageId);
+            const pagesArray = Array.from(pages);
+            const nextPageIndex = pagesArray.indexOf(targetPage);
+            const currentPageIndex = pagesArray.findIndex(p => p.classList.contains('active'));
+
+            pages.forEach((page, index) => {
+                page.classList.remove('active', 'prev', 'next');
+                if (index < nextPageIndex) {
+                    page.classList.add('prev');
+                } else if (index > nextPageIndex) {
+                    page.classList.add('next');
+                }
+            });
+
+            targetPage.classList.add('active');
+            appState.currentPage = pageId;
+
+            // Scroll to top on navigation
+            targetPage.scrollTop = 0;
+
+            if (pageId === 'page-history') {
+                loadHistory();
+            }
+        }
+
+        // History management
+        function saveToHistory(risk) {
+            const history = JSON.parse(localStorage.getItem('agrishield_history') || '[]');
+            const record = {
+                id: Date.now(),
+                date: new Date().toLocaleString(appState.currentLang === 'th' ? 'th-TH' : 'en-US'),
+                chemical: appState.chemicalName,
+                risk: risk,
+                lang: appState.currentLang
             };
-        }
-    });
-
-    // Scan handling
-    const dropArea = document.getElementById('drop-area');
-    const fileInput = document.getElementById('file-input');
-    const previewImage = document.getElementById('preview-image');
-    const scanPlaceholder = document.getElementById('scan-placeholder');
-    const btnAnalyze = document.getElementById('btn-analyze');
-
-    dropArea.onclick = () => fileInput.click();
-
-    fileInput.onchange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (re) => {
-                previewImage.src = re.target.result;
-                previewImage.style.display = 'block';
-                scanPlaceholder.style.display = 'none';
-                btnAnalyze.disabled = false;
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-
-    function handleScanComplete() {
-        document.getElementById('chemical-name').value = "Generic Agrochemical";
-        navigateTo('page-input');
-    }
-
-    function calculateAndShowResult() {
-        const lang = appState.currentLang;
-        appState.chemicalName = document.getElementById('chemical-name').value || (lang === 'en' ? 'Unknown Chemical' : 'ไม่ระบุชื่อสาร');
-        appState.duration = document.getElementById('duration').value;
-        
-        appState.ppe = Array.from(document.querySelectorAll('input[name="ppe"]:checked')).map(i => i.value);
-        appState.symptoms = Array.from(document.querySelectorAll('input[name="symptom"]:checked')).map(i => i.value);
-
-        // Remove 'none' from risk calculation
-        const realSymptoms = appState.symptoms.filter(s => s !== 'none');
-        const symptomCount = realSymptoms.length;
-        const durationValue = parseInt(appState.duration);
-        
-        let risk = 'low';
-        if (symptomCount >= 4 || (symptomCount >= 2 && durationValue >= 8)) {
-            risk = 'high';
-        } else if (symptomCount >= 2 || durationValue >= 4) {
-            risk = 'medium';
+            history.unshift(record);
+            localStorage.setItem('agrishield_history', JSON.stringify(history.slice(0, 20))); // Keep last 20
         }
 
-        displayResult(risk);
-        navigateTo('page-result');
-    }
+        function loadHistory() {
+            const list = document.getElementById('history-list');
+            const history = JSON.parse(localStorage.getItem('agrishield_history') || '[]');
+            const lng = appState.currentLang;
 
-    function displayResult(risk) {
-        const lng = appState.currentLang;
-        const badge = document.getElementById('risk-badge');
-        const icon = document.getElementById('result-icon');
-        const firstAid = document.getElementById('first-aid-content');
-        const recs = document.getElementById('recommendations-content');
-        const title = document.getElementById('result-title');
+            if (history.length === 0) {
+                list.innerHTML = `<div class="empty-history" data-i18n="history-empty">${i18n[lng]['history-empty']}</div>`;
+                return;
+            }
 
-        badge.className = 'risk-badge';
-        
-        document.getElementById('res-chemical').innerText = appState.chemicalName;
-        document.getElementById('res-duration').innerText = i18n[lng][`dur-${appState.duration}`];
-        
-        const ppeLabels = appState.ppe.map(p => i18n[lng][`ppe-${p}`]);
-        document.getElementById('res-ppe').innerText = ppeLabels.length > 0 ? ppeLabels.join(', ') : i18n[lng]['res-ppe-none'];
-        
-        const realSymptoms = appState.symptoms.filter(s => s !== 'none');
-        const sympLabels = realSymptoms.map(s => i18n[lng][`symp-${s}`]);
-        document.getElementById('res-symptoms').innerText = (realSymptoms.length > 0) ? sympLabels.join(', ') : i18n[lng]['res-none'];
-
-        if (risk === 'high') {
-            badge.innerText = i18n[lng]['risk-high'];
-            badge.classList.add('risk-high');
-            icon.innerText = '🚨';
-            firstAid.style.borderLeftColor = 'var(--danger)';
-            firstAid.innerHTML = i18n[lng]['risk-high-aid'];
-            recs.innerHTML = i18n[lng]['risk-high-recs'];
-        } else if (risk === 'medium') {
-            badge.innerText = i18n[lng]['risk-medium'];
-            badge.classList.add('risk-medium');
-            icon.innerText = '⚠️';
-            firstAid.style.borderLeftColor = 'var(--warning)';
-            firstAid.innerHTML = i18n[lng]['risk-med-aid'];
-            recs.innerHTML = i18n[lng]['risk-med-recs'];
-        } else {
-            badge.innerText = i18n[lng]['risk-low'];
-            badge.classList.add('risk-low');
-            icon.innerText = '✅';
-            firstAid.style.borderLeftColor = 'var(--success)';
-            firstAid.innerHTML = i18n[lng]['risk-low-aid'];
-            recs.innerHTML = i18n[lng]['risk-low-recs'];
+            list.innerHTML = history.map(item => `
+            <div class="history-item ${item.risk}">
+                <div class="history-info">
+                    <div class="history-date">${item.date}</div>
+                    <div class="history-chem">${item.chemical}</div>
+                    <div style="font-size: 13px; margin-top: 4px;">
+                        <span data-i18n="history-risk">${i18n[lng]['history-risk']}</span> 
+                        <span style="font-weight: 700;">${i18n[lng]['risk-' + item.risk]}</span>
+                    </div>
+                </div>
+                <button class="lang-btn" onclick="deleteHistoryItem(${item.id})" style="border:none; background: #fee2e2; color: #b91c1c; min-width: 32px; padding: 4px;">✕</button>
+            </div>
+        `).join('');
         }
-    }
 
-    function resetApp() {
-        document.getElementById('chemical-name').value = '';
-        document.getElementById('duration').value = '1';
-        document.querySelectorAll('input[type="checkbox"]').forEach(i => i.checked = false);
-        previewImage.style.display = 'none';
-        scanPlaceholder.style.display = 'block';
-        btnAnalyze.disabled = true;
-        
-        navigateTo('page-home');
-    }
+        function deleteHistoryItem(id) {
+            let history = JSON.parse(localStorage.getItem('agrishield_history') || '[]');
+            history = history.filter(item => item.id !== id);
+            localStorage.setItem('agrishield_history', JSON.stringify(history));
+            loadHistory();
+        }
 
-    // Initialize language
-    setLanguage('en');
-</script>
+        function clearAllHistory() {
+            if (confirm(appState.currentLang === 'th' ? 'ล้างประวัติทั้งหมดใช่หรือไม่?' : 'Clear all history?')) {
+                localStorage.removeItem('agrishield_history');
+                loadHistory();
+            }
+        }
+
+        // Symptoms "None" mutual exclusivity logic
+        const noneSymptomsCheckbox = document.getElementById('symptom-none');
+        const allSymptomsCheckboxes = document.querySelectorAll('input[name="symptom"]');
+
+        noneSymptomsCheckbox.onchange = () => {
+            if (noneSymptomsCheckbox.checked) {
+                allSymptomsCheckboxes.forEach(cb => {
+                    if (cb !== noneSymptomsCheckbox) cb.checked = false;
+                });
+            }
+        };
+
+        allSymptomsCheckboxes.forEach(cb => {
+            if (cb !== noneSymptomsCheckbox) {
+                cb.onchange = () => {
+                    if (cb.checked) noneSymptomsCheckbox.checked = false;
+                };
+            }
+        });
+
+        // Scan handling
+        const dropArea = document.getElementById('drop-area');
+        const fileInput = document.getElementById('file-input');
+        const previewImage = document.getElementById('preview-image');
+        const scanPlaceholder = document.getElementById('scan-placeholder');
+        const btnAnalyze = document.getElementById('btn-analyze');
+
+        dropArea.onclick = () => fileInput.click();
+
+        fileInput.onchange = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (re) => {
+                    previewImage.src = re.target.result;
+                    previewImage.style.display = 'block';
+                    scanPlaceholder.style.display = 'none';
+                    btnAnalyze.disabled = false;
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+
+        function handleScanComplete() {
+            document.getElementById('chemical-name').value = "Generic Agrochemical";
+            navigateTo('page-input');
+        }
+
+        function calculateAndShowResult() {
+            const lang = appState.currentLang;
+            appState.chemicalName = document.getElementById('chemical-name').value || (lang === 'en' ? 'Unknown Chemical' : 'ไม่ระบุชื่อสาร');
+            appState.duration = document.getElementById('duration').value;
+
+            appState.ppe = Array.from(document.querySelectorAll('input[name="ppe"]:checked')).map(i => i.value);
+            appState.symptoms = Array.from(document.querySelectorAll('input[name="symptom"]:checked')).map(i => i.value);
+
+            // Remove 'none' from risk calculation
+            const realSymptoms = appState.symptoms.filter(s => s !== 'none');
+            const symptomCount = realSymptoms.length;
+            const durationValue = parseInt(appState.duration);
+
+            let risk = 'low';
+            if (symptomCount >= 4 || (symptomCount >= 2 && durationValue >= 8)) {
+                risk = 'high';
+            } else if (symptomCount >= 2 || durationValue >= 4) {
+                risk = 'medium';
+            }
+
+            displayResult(risk);
+            saveToHistory(risk);
+            navigateTo('page-result');
+        }
+
+        function displayResult(risk) {
+            const lng = appState.currentLang;
+            const badge = document.getElementById('risk-badge');
+            const icon = document.getElementById('result-icon');
+            const firstAid = document.getElementById('first-aid-content');
+            const recs = document.getElementById('recommendations-content');
+            const title = document.getElementById('result-title');
+
+            badge.className = 'risk-badge';
+
+            document.getElementById('res-chemical').innerText = appState.chemicalName;
+            document.getElementById('res-duration').innerText = i18n[lng][`dur-${appState.duration}`];
+
+            const ppeLabels = appState.ppe.map(p => i18n[lng][`ppe-${p}`]);
+            document.getElementById('res-ppe').innerText = ppeLabels.length > 0 ? ppeLabels.join(', ') : i18n[lng]['res-ppe-none'];
+
+            const realSymptoms = appState.symptoms.filter(s => s !== 'none');
+            const sympLabels = realSymptoms.map(s => i18n[lng][`symp-${s}`]);
+            document.getElementById('res-symptoms').innerText = (realSymptoms.length > 0) ? sympLabels.join(', ') : i18n[lng]['res-none'];
+
+            if (risk === 'high') {
+                badge.innerText = i18n[lng]['risk-high'];
+                badge.classList.add('risk-high');
+                icon.innerText = '🚨';
+                firstAid.style.borderLeftColor = 'var(--danger)';
+                firstAid.innerHTML = i18n[lng]['risk-high-aid'];
+                recs.innerHTML = i18n[lng]['risk-high-recs'];
+            } else if (risk === 'medium') {
+                badge.innerText = i18n[lng]['risk-medium'];
+                badge.classList.add('risk-medium');
+                icon.innerText = '⚠️';
+                firstAid.style.borderLeftColor = 'var(--warning)';
+                firstAid.innerHTML = i18n[lng]['risk-med-aid'];
+                recs.innerHTML = i18n[lng]['risk-med-recs'];
+            } else {
+                badge.innerText = i18n[lng]['risk-low'];
+                badge.classList.add('risk-low');
+                icon.innerText = '✅';
+                firstAid.style.borderLeftColor = 'var(--success)';
+                firstAid.innerHTML = i18n[lng]['risk-low-aid'];
+                recs.innerHTML = i18n[lng]['risk-low-recs'];
+            }
+        }
+
+        function resetApp() {
+            document.getElementById('chemical-name').value = '';
+            document.getElementById('duration').value = '1';
+            document.querySelectorAll('input[type="checkbox"]').forEach(i => i.checked = false);
+            previewImage.style.display = 'none';
+            scanPlaceholder.style.display = 'block';
+            btnAnalyze.disabled = true;
+
+            navigateTo('page-home');
+        }
+
+        // Initialize language
+        setLanguage('en');
+    </script>
 
 </body>
+
 </html>
