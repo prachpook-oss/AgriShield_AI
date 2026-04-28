@@ -8,6 +8,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script type="importmap">
+        {
+          "imports": {
+            "@google/generative-ai": "https://esm.run/@google/generative-ai"
+          }
+        }
+    </script>
     <style>
         :root {
             --primary: #10b981;
@@ -482,6 +489,24 @@
             <p style="margin-bottom: 24px;" data-i18n="settings-subtitle">Configure application preferences.</p>
 
             <div class="card">
+                <div class="input-group" style="margin-bottom: 0;">
+                    <label data-i18n="settings-api-label">Gemini API Key</label>
+                    <input type="text" id="api-key-input" placeholder="Enter API Key" data-i18n-placeholder="settings-api-placeholder" onchange="saveApiKey()">
+                    <p style="font-size: 11px; color: var(--text-sub); margin-top: 8px;" data-i18n="settings-api-help">
+                        Get your key from <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a>
+                    </p>
+                </div>
+                <div style="display: flex; gap: 8px; margin-top: 12px;">
+                    <button class="btn btn-outline" id="btn-test-api" onclick="testApiKey()" style="flex: 1; padding: 10px; font-size: 14px;">
+                        <span data-i18n="btn-test-api">Test Connection</span>
+                    </button>
+                    <button class="btn btn-outline" onclick="listModels()" style="flex: 1; padding: 10px; font-size: 14px;">
+                        <span>📋</span> <span data-i18n="btn-list-models">List Models</span>
+                    </button>
+                </div>
+                <div id="api-test-result" style="margin-top: 10px; font-size: 12px; font-weight: 600; max-height: 100px; overflow-y: auto;"></div>
+            </div>
+            <div class="card">
                 <p style="font-size: 14px; color: var(--text-sub);" data-i18n="settings-info">
                     Application settings and preferences will appear here.
                 </p>
@@ -520,7 +545,7 @@
                 <input type="file" id="file-input" style="display: none;" accept="image/*">
             </div>
 
-            <button class="btn btn-primary" id="btn-next-scan" disabled onclick="navigateTo('page-input')"
+            <button class="btn btn-primary" id="btn-next-scan" disabled onclick="handleScanAndAnalyze()"
                 data-i18n="btn-next">Next</button>
         </section>
 
@@ -711,7 +736,7 @@
         </section>
     </div>
 
-    <script>
+    <script type="module">
         const i18n = {
             en: {
                 "app-title": "AgriShield AI",
@@ -792,7 +817,16 @@
                 "btn-get-location": "Get Current Location",
                 "location-error": "Unable to retrieve location.",
                 "location-loading": "Locating...",
-                "res-source": "Information based on guidelines from the Provincial Public Health Office"
+                "res-source": "Information based on guidelines from the Provincial Public Health Office",
+                "settings-api-label": "Gemini API Key",
+                "settings-api-placeholder": "Enter your API Key",
+                "settings-api-help": "Get your key from Google AI Studio",
+                "btn-analyzing": "Analyzing...",
+                "err-ai-failed": "AI analysis failed. Please enter manually.",
+                "btn-test-api": "Test Connection",
+                "api-test-success": "Connection successful! API is working.",
+                "api-test-fail": "Connection failed: ",
+                "btn-list-models": "List Models"
             },
             th: {
                 "app-title": "AgriShield AI",
@@ -873,7 +907,16 @@
                 "btn-get-location": "ดึงพิกัดปัจจุบัน",
                 "location-error": "ไม่สามารถดึงข้อมูลตำแหน่งได้",
                 "location-loading": "กำลังค้นหาตำแหน่ง...",
-                "res-source": "ข้อมูลอ้างอิงจากแนวทางของสำนักงานสาธารณสุขจังหวัด"
+                "res-source": "ข้อมูลอ้างอิงจากแนวทางของสำนักงานสาธารณสุขจังหวัด",
+                "settings-api-label": "Gemini API Key",
+                "settings-api-placeholder": "ใส่รหัส API Key ของคุณ",
+                "settings-api-help": "รับรหัส Key ได้ที่ Google AI Studio",
+                "btn-analyzing": "กำลังวิเคราะห์...",
+                "err-ai-failed": "การวิเคราะห์ล้มเหลว กรุณากรอกข้อมูลเอง",
+                "btn-test-api": "ทดสอบการเชื่อมต่อ",
+                "api-test-success": "เชื่อมต่อสำเร็จ! API ใช้งานได้ปกติ",
+                "api-test-fail": "เชื่อมต่อล้มเหลว: ",
+                "btn-list-models": "ตรวจสอบรุ่น AI"
             }
         };
 
@@ -883,7 +926,8 @@
             chemicalName: '',
             duration: '',
             ppe: [],
-            symptoms: []
+            symptoms: [],
+            apiKey: localStorage.getItem('agrishield_api_key') || ''
         };
 
         function setLanguage(lang) {
@@ -909,6 +953,80 @@
                     el.placeholder = i18n[lang][key];
                 }
             });
+
+            // Initialize API Key input if on settings page
+            const apiInput = document.getElementById('api-key-input');
+            if (apiInput) apiInput.value = appState.apiKey;
+        }
+
+        function saveApiKey() {
+            const key = document.getElementById('api-key-input').value.trim();
+            appState.apiKey = key;
+            localStorage.setItem('agrishield_api_key', key);
+        }
+
+        async function testApiKey() {
+            const btn = document.getElementById('btn-test-api');
+            const resultEl = document.getElementById('api-test-result');
+            const lng = appState.currentLang;
+            
+            if (!appState.apiKey) {
+                alert("Please enter API Key first!");
+                return;
+            }
+
+            btn.disabled = true;
+            resultEl.innerText = "Testing...";
+            resultEl.style.color = "var(--text-sub)";
+
+            try {
+                const apiKey = appState.apiKey;
+                const url = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+                
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: "Hello" }] }]
+                    })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    resultEl.innerText = i18n[lng]['api-test-success'];
+                    resultEl.style.color = "var(--success)";
+                } else {
+                    throw new Error(data.error?.message || "Unknown API Error");
+                }
+            } catch (e) {
+                console.error(e);
+                resultEl.innerText = i18n[lng]['api-test-fail'] + e.message;
+                resultEl.style.color = "var(--danger)";
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        async function listModels() {
+            const resultEl = document.getElementById('api-test-result');
+            if (!appState.apiKey) { alert("Enter API Key first!"); return; }
+            
+            resultEl.innerText = "Fetching models...";
+            try {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1/models?key=${appState.apiKey}`);
+                const data = await res.json();
+                if (data.models) {
+                    const names = data.models.map(m => m.name.split('/').pop()).join(', ');
+                    resultEl.innerText = "Available: " + names;
+                    resultEl.style.color = "var(--primary-dark)";
+                } else {
+                    resultEl.innerText = "Error: " + (data.error?.message || "No models found");
+                    resultEl.style.color = "var(--danger)";
+                }
+            } catch (e) {
+                resultEl.innerText = "Network Error: " + e.message;
+                resultEl.style.color = "var(--danger)";
+            }
         }
 
         function navigateTo(pageId) {
@@ -1083,7 +1201,79 @@
             }
         };
 
-        // handleScanComplete, runSimulator, and callGeminiVision removed as per user request
+        // handleScanAndAnalyze logic
+        async function handleScanAndAnalyze() {
+            const btn = document.getElementById('btn-next-scan');
+            const originalText = btn.innerHTML;
+            const lng = appState.currentLang;
+
+            // If no API key, just navigate
+            if (!appState.apiKey) {
+                navigateTo('page-input');
+                return;
+            }
+
+            // Start loading state
+            btn.classList.add('btn-loading');
+            btn.disabled = true;
+            btn.innerHTML = `<span data-i18n="btn-analyzing">${i18n[lng]['btn-analyzing']}</span>`;
+
+            try {
+                const imageData = previewImage.src;
+                if (imageData && imageData.startsWith('data:image')) {
+                    const base64Data = imageData.split(',')[1];
+                    const analysis = await callGeminiAI(base64Data);
+                    
+                    if (analysis && analysis.chemicalName) {
+                        document.getElementById('chemical-name').value = analysis.chemicalName;
+                    }
+                }
+                navigateTo('page-input');
+            } catch (error) {
+                console.error("AI Analysis failed:", error);
+                const errorDetail = error.message ? ` (${error.message.substring(0, 50)}...)` : "";
+                alert(i18n[lng]['err-ai-failed'] + errorDetail);
+                navigateTo('page-input');
+            } finally {
+                btn.classList.remove('btn-loading');
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
+
+        async function callGeminiAI(base64Image) {
+            try {
+                const apiKey = appState.apiKey;
+                const url = `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+                
+                const prompt = `Analyze this chemical label. Extract the chemical name. 
+                Return ONLY a JSON object like this: {"chemicalName": "Name here"}. 
+                If you cannot find the name, return {"chemicalName": ""}.`;
+
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [
+                                { text: prompt },
+                                { inlineData: { mimeType: "image/jpeg", data: base64Image } }
+                            ]
+                        }]
+                    })
+                });
+
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error?.message || "API Error");
+
+                const text = data.candidates[0].content.parts[0].text;
+                const jsonStr = text.replace(/```json|```/g, '').trim();
+                return JSON.parse(jsonStr);
+            } catch (e) {
+                console.error("Gemini API Error:", e);
+                throw e;
+            }
+        }
 
         function calculateAndShowResult() {
             const lang = appState.currentLang;
@@ -1177,6 +1367,22 @@
 
             navigateTo('page-home');
         }
+
+        // Expose functions to window for HTML onclick handlers
+        window.setLanguage = setLanguage;
+        window.navigateTo = navigateTo;
+        window.saveApiKey = saveApiKey;
+        window.saveToHistory = saveToHistory;
+        window.getLocation = getLocation;
+        window.viewHistoryItem = viewHistoryItem;
+        window.deleteHistoryItem = deleteHistoryItem;
+        window.clearAllHistory = clearAllHistory;
+        window.handleScanAndAnalyze = handleScanAndAnalyze;
+        window.testApiKey = testApiKey;
+        window.listModels = listModels;
+        window.calculateAndShowResult = calculateAndShowResult;
+        window.displayResult = displayResult;
+        window.resetApp = resetApp;
 
         // Initialize language
         setLanguage('en');
